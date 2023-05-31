@@ -49,4 +49,14 @@ export declare class CveDate {
      * @returns today's midnight as a Javascript Date object
      */
     static getMidnight(): Date;
+    /**
+     * returns yesterday's midnight (i.e., yesterday's date with hours all set to 0)
+     * @returns yesterday's midnight as a Javascript Date object
+     */
+    static getMidnightYesterday(): Date;
+    /**
+     * returns yesterday's midnight (i.e., yesterday's date with hours all set to 0)
+     * @returns yesterday's midnight as a Javascript Date object
+     */
+    static getSecondsAfterMidnight(): number;
 }
