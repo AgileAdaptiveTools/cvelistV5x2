@@ -52385,6 +52385,12 @@ class DateCommand extends GenericCommand {
     }
 }
 
+// EXTERNAL MODULE: ./node_modules/date-fns/endOfYesterday/index.js
+var endOfYesterday = __nccwpck_require__(66);
+var endOfYesterday_default = /*#__PURE__*/__nccwpck_require__.n(endOfYesterday);
+// EXTERNAL MODULE: ./node_modules/date-fns/startOfYesterday/index.js
+var startOfYesterday = __nccwpck_require__(1672);
+var startOfYesterday_default = /*#__PURE__*/__nccwpck_require__.n(startOfYesterday);
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(7147);
 var external_fs_default = /*#__PURE__*/__nccwpck_require__.n(external_fs_);
@@ -57150,6 +57156,8 @@ class Delta /*implements DeltaProps*/ {
 
 
 
+
+
 class DeltaCommand extends GenericCommand {
     constructor(program) {
         const name = 'delta';
@@ -57158,22 +57166,37 @@ class DeltaCommand extends GenericCommand {
             .command(name)
             .description('cve deltas (cve file changes)')
             .option('--after <ISO timestamp>', 'show CVEs changed since <timestamp>, defaults to UTC midnight of today', `${CveDate.getMidnight().toISOString()}`)
+            .option(`--yesterday-only`, 'do a delta of all of the CVEs changed yesterday')
             // .option('--repository <path>', 'set repository, defaults to env var CVES_BASE_DIRECTORY', process.env.CVES_BASE_DIRECTORY)
             .action(this.run);
     }
     async run(options) {
         super.prerun(options);
-        // console.log(`delta command called with ${JSON.stringify(options, null, 2)}`);
-        const timestamp = new Date();
-        const delta = await Delta.newDeltaFromGitHistory(options.after);
-        // console.log(`delta=${JSON.stringify(delta, null, 2)}`);
-        console.log(delta.toText());
-        const date = format_default()(timestamp, 'yyyy-MM-dd');
-        const time = format_default()(timestamp, 'HH');
-        const deltaFilename = `${date}_delta_CVEs_at_${time}00Z`;
-        delta.writeFile(`${deltaFilename}.json`);
-        delta.writeCves(undefined, `${deltaFilename}.zip`);
-        delta.writeTextFile(`release_notes.md`);
+        /** if less than 50 minutes before 1am */
+        if (CveDate.getSecondsAfterMidnight() < 50 * 60) {
+            const timestamp = startOfYesterday_default()();
+            const delta = await Delta.newDeltaFromGitHistory(timestamp.toISOString(), endOfYesterday_default()().toISOString());
+            console.log(`delta=${JSON.stringify(delta, null, 2)}`);
+            console.log(delta.toText());
+            const date = format_default()(timestamp, 'yyyy-MM-dd');
+            // const time = format(timestamp, 'HH');
+            const deltaFilename = `${date}_delta_CVEs_at_end_of_day`;
+            delta.writeFile(`${deltaFilename}.json`);
+            delta.writeCves(undefined, `${deltaFilename}.zip`);
+            delta.writeTextFile(`release_notes.md`);
+        }
+        else {
+            const timestamp = new Date();
+            const delta = await Delta.newDeltaFromGitHistory(options.after);
+            // console.log(`delta=${JSON.stringify(delta, null, 2)}`);
+            console.log(delta.toText());
+            const date = format_default()(timestamp, 'yyyy-MM-dd');
+            const time = format_default()(timestamp, 'HH');
+            const deltaFilename = `${date}_delta_CVEs_at_${time}00Z`;
+            delta.writeFile(`${deltaFilename}.json`);
+            delta.writeCves(undefined, `${deltaFilename}.zip`);
+            delta.writeTextFile(`release_notes.md`);
+        }
         super.postrun(options);
     }
 }
@@ -57829,7 +57852,7 @@ dotenv__WEBPACK_IMPORTED_MODULE_0__.config();
  *  The format follows semver for released software: Major.Minor.Patch, e.g., `1.0.0`
  *  However before release, it only uses the GitHub Project sprint number, e.g., `Sprint-1`
  */
-const version = `1.0.1-2023.05.31a`;
+const version = `1.0.1-2023.05.31b`;
 
 const program = new _commands_MainCommands_js__WEBPACK_IMPORTED_MODULE_1__/* .MainCommands */ .D(version);
 await program.run();
