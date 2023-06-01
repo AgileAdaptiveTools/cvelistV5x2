@@ -1,5 +1,5 @@
-# Github Action for hourly releases
-
+# Github Action for final delta release of all of yesterday's CVEs 
+# that had been either added or updated
 name: CVE Yesterday's Delta Release
 
 on:
@@ -15,19 +15,7 @@ on:
         required: false
         default: 'debug'
 jobs:
-  # setup:
-  #   environment: deployment
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     v_current_run_timestamp: ${{ steps.get-timestamp.outputs.out }}
-  #   steps:
-  #     - name: util-id
-  #       run: node ./.github/workflows/dist/index.js --version
-  #     - name: generate-name
-  #       id: get-timestamp
-  #       run: echo "out=$(node ./.github/workflows/dist/index.js date --midnight-yesterday --terse)" >> $GITHUB_ENV
   create_release:
-    # needs: [setup]
     environment: deployment
     runs-on: ubuntu-latest
     env:
@@ -53,17 +41,12 @@ jobs:
         run: |
           ls ./.github/workflows/dist
           node ./.github/workflows/dist/index.js delta --yesterday-all
-          echo "env.timestamp:"
-          echo "${{ env.timestamp }}"
-          echo "steps.version.outputs:"
-          echo "${{ steps.version.outputs }}"
       - name: create release with source code as artifacts
         uses: softprops/action-gh-release@v1
         with:
-          name: CVE2 ${{ env.timestamp }} at End of Day
-          # body: Descriptions for CVE ${{ steps.timestamp.timestamp }} goes here
+          name: CVE ${{ env.timestamp }} at End of Day
           body_path: ./release_notes.md
-          tag_name: cve2_${{ env.timestamp }}_at_end_of_day
+          tag_name: cve_${{ env.timestamp }}_at_end_of_day
           files: |
             release_notes.md
             *.zip
