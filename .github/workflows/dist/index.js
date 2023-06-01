@@ -52185,8 +52185,8 @@ class CveDate {
     /** the constructor only creates a new CveDate based on an ISO date string
      *  @param isoDateStr a string represenation of a date in ISO/UTC/Z format
      *                    defaults to "now"
-    */
-    constructor(isoDateStr = "") {
+     */
+    constructor(isoDateStr = '') {
         if (isoDateStr.length === 0) {
             this._jsDate = new Date();
         }
@@ -52206,20 +52206,20 @@ class CveDate {
         return new IsoDateString(CveDate.toISOString(this._jsDate));
     }
     /** returns a ISO/UTC formatted string in specified locale and time zone */
-    asDateString(timeZone = "America/New_York") {
-        return formatInTimeZone(this._jsDate, timeZone, "yyyy-MM-dd pp zzzz");
+    asDateString(timeZone = 'America/New_York') {
+        return formatInTimeZone(this._jsDate, timeZone, 'yyyy-MM-dd pp zzzz');
     }
     /** returns JS Date.toISOString() */
     toString() {
         return CveDate.toISOString(this._jsDate);
     }
-    // ----- static class utilities ----- ----- ----- ----- ----- 
+    // ----- static class utilities ----- ----- ----- ----- -----
     /**
      * @param jsDate a JS Date object, defaults to current timestamp
      * @returns the current date in ISO string format (i.e., JS Date's toISOString() format)
      */
     static toISOString(jsDate = null) {
-        const time = (jsDate) ? jsDate : new Date();
+        const time = jsDate ? jsDate : new Date();
         return time.toISOString();
     }
     /**
@@ -52255,6 +52255,14 @@ class CveDate {
         const midnight = CveDate.getMidnight();
         const midnightYesterday = (0,date_fns.sub)(midnight, { days: 1 });
         return midnightYesterday;
+    }
+    /**
+     * returns yesterday's date as a string
+     * @returns yesterday's date as a string
+     */
+    static getYesterday() {
+        const midnightYesterday = CveDate.getMidnightYesterday();
+        return CveDate.getDateComponents(midnightYesterday)[0];
     }
     /**
      * returns yesterday's midnight (i.e., yesterday's date with hours all set to 0)
@@ -52356,10 +52364,11 @@ class DateCommand extends GenericCommand {
         this._program
             .command(name)
             .description('current date')
-            .option('--local-timezone <IANA timezone>', 'show current time in timezone', "America/New_York")
+            .option('--local-timezone <IANA timezone>', 'show current time in timezone', 'America/New_York')
             .option('--after-midnight-by-at-most-secs <secs>', 'return true iff current time is after midnight (ISO date) by at most specified secs', '18000')
             .option('--midnight', 'show midnight of today (ISO date)')
             .option('--midnight-yesterday', 'show midnight of yesterday (ISO date)')
+            .option('--yesterday', "show yesterday's date (ISO date)")
             .option('--terse', 'show only result, useful for bash scripts')
             .action(this.run);
     }
@@ -52373,8 +52382,13 @@ class DateCommand extends GenericCommand {
             const tag = options.terse ? '' : `  midnightYesterday:  `;
             console.log(`${tag}${CveDate.toISOString(CveDate.getMidnightYesterday())}`);
         }
+        else if (options.yesterday) {
+            const tag = options.terse ? '' : `  yesterday:  `;
+            console.log(`${tag}${CveDate.getYesterday()}`);
+        }
         else if (options.afterMidnightByAtMostSecs) {
-            if (CveDate.getSecondsAfterMidnight() <= parseInt(options.afterMidnightByAtMostSecs)) {
+            if (CveDate.getSecondsAfterMidnight() <=
+                parseInt(options.afterMidnightByAtMostSecs)) {
                 console.log(`true`);
             }
             else {
