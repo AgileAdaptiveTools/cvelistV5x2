@@ -46,15 +46,8 @@ jobs:
       - name: Get utility version
         run: node ./.github/workflows/dist/index.js --version
       - name: generate-name
-        id: get-timestamp
-        run: echo "out=$(node ./.github/workflows/dist/index.js date --midnight-yesterday --terse)" >> $GITHUB_OUTPUT  
-      - name: Download artifact from baseline workflow
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: baseline.yml
-          workflow_conclusion: success
-          skip_unpack: true
-          if_no_artifact_found: fail
+        id: timestamp
+        run: echo "timestamp=$(node ./.github/workflows/dist/index.js date --midnight-yesterday --terse)" >> $GITHUB_OUTPUT  
       - name: build delta files
         run: |
           ls ./.github/workflows/dist
@@ -62,10 +55,10 @@ jobs:
       - name: create release with source code as artifacts
         uses: softprops/action-gh-release@v1
         with:
-          name: CVE ${{ needs.generate-name.outputs.v_current_run_timestamp }} at End of Day
-          # body: Descriptions for CVE ${{ needs.generate-name.outputs.v_current_run_timestamp }} goes here
+          name: CVE ${{ steps.timestamp.timestamp }} at End of Day
+          # body: Descriptions for CVE ${{ steps.timestamp.timestamp }} goes here
           body_path: ./release_notes.md
-          tag_name: cve_${{ needs.generate-name.outputs.v_current_run_timestamp }}_at_end_of_day
+          tag_name: cve_${{ steps.timestamp.timestamp }}_at_end_of_day
           files: |
             release_notes.md
             *.zip
