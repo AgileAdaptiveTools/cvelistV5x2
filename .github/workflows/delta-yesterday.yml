@@ -25,7 +25,7 @@ jobs:
   #       run: node ./.github/workflows/dist/index.js --version
   #     - name: generate-name
   #       id: get-timestamp
-  #       run: echo "out=$(node ./.github/workflows/dist/index.js date --midnight-yesterday --terse)" >> $GITHUB_OUTPUT
+  #       run: echo "out=$(node ./.github/workflows/dist/index.js date --midnight-yesterday --terse)" >> $GITHUB_ENV
   create_release:
     # needs: [setup]
     environment: deployment
@@ -48,14 +48,15 @@ jobs:
         run: node ./.github/workflows/dist/index.js --version
       - name: generate-name
         id: timestamp
-        run: echo "timestamp=$(node ./.github/workflows/dist/index.js date --midnight-yesterday --terse)" >> $GITHUB_OUTPUT  
+        run: echo "timestamp=$(node ./.github/workflows/dist/index.js date --midnight-yesterday --terse)" >> $GITHUB_ENV
       - name: build delta files
         run: |
           ls ./.github/workflows/dist
           node ./.github/workflows/dist/index.js delta --yesterday-all
-          echo "env:"
-          echo "${{ env }}"
-          echo "${{ steps.version }}"
+          echo "env.timestamp:"
+          echo "${{ env.timestamp }}"
+          echo "steps.version.outputs:"
+          echo "${{ steps.version.outputs }}"
       - name: create release with source code as artifacts
         uses: softprops/action-gh-release@v1
         with:
