@@ -15,17 +15,19 @@ on:
         required: false
         default: 'debug'
 jobs:
-  generate-name:
+  setup:
     environment: deployment
     runs-on: ubuntu-latest
     outputs:
       v_current_run_timestamp: ${{ steps.get-timestamp.outputs.out }}
     steps:
+      - name: util-id
+        run: ./cves.sh --version
       - name: generate-name
         id: get-timestamp
-        run: echo "out=$(date '+%Y-%m-%d_%H00Z')" >> $GITHUB_OUTPUT
+        run: echo "out=$(./cves.sh date --midnight-yesterday --terse)" >> $GITHUB_OUTPUT
   create_release:
-    needs: [generate-name]
+    needs: [setup]
     environment: deployment
     runs-on: ubuntu-latest
     env:
@@ -55,10 +57,10 @@ jobs:
       - name: create release with source code as artifacts
         uses: softprops/action-gh-release@v1
         with:
-          name: CVE ${{ needs.generate-name.outputs.v_current_run_timestamp }}
+          name: CVE ${{ needs.generate-name.outputs.v_current_run_timestamp }} at End of Day
           # body: Descriptions for CVE ${{ needs.generate-name.outputs.v_current_run_timestamp }} goes here
           body_path: ./release_notes.md
-          tag_name: cve_${{ needs.generate-name.outputs.v_current_run_timestamp }}
+          tag_name: cve_${{ needs.generate-name.outputs.v_current_run_timestamp }}_at_end_of_day
           files: |
             release_notes.md
             *.zip
