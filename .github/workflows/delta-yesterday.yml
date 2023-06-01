@@ -44,6 +44,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Get utility version
+        id: version
         run: node ./.github/workflows/dist/index.js --version
       - name: generate-name
         id: timestamp
@@ -52,13 +53,16 @@ jobs:
         run: |
           ls ./.github/workflows/dist
           node ./.github/workflows/dist/index.js delta --yesterday-all
+          echo "env.timestamp:"
+          echo "${{ env.timestamp }}"
+          echo "${{ steps.version.out }}"
       - name: create release with source code as artifacts
         uses: softprops/action-gh-release@v1
         with:
-          name: CVE ${{ env.timestamp }} at End of Day
+          name: CVE2 ${{ env.timestamp }} at End of Day
           # body: Descriptions for CVE ${{ steps.timestamp.timestamp }} goes here
           body_path: ./release_notes.md
-          tag_name: cve_${{ env.timestamp }}_at_end_of_day
+          tag_name: cve2_${{ env.timestamp }}_at_end_of_day
           files: |
             release_notes.md
             *.zip
