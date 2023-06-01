@@ -53,9 +53,9 @@ jobs:
         run: |
           ls ./.github/workflows/dist
           node ./.github/workflows/dist/index.js delta --yesterday-all
-          echo "env.timestamp:"
-          echo "${{ env.timestamp }}"
-          echo "${{ steps.version.out }}"
+          echo "env:"
+          echo "${{ env }}"
+          echo "${{ steps.version }}"
       - name: create release with source code as artifacts
         uses: softprops/action-gh-release@v1
         with:
