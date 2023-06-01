@@ -57166,14 +57166,14 @@ class DeltaCommand extends GenericCommand {
             .command(name)
             .description('cve deltas (cve file changes)')
             .option('--after <ISO timestamp>', 'show CVEs changed since <timestamp>, defaults to UTC midnight of today', `${CveDate.getMidnight().toISOString()}`)
-            .option(`--yesterday-only`, 'do a delta of all of the CVEs changed yesterday')
+            .option(`--yesterday-all`, 'do a delta of all of the CVEs changed yesterday')
             // .option('--repository <path>', 'set repository, defaults to env var CVES_BASE_DIRECTORY', process.env.CVES_BASE_DIRECTORY)
             .action(this.run);
     }
     async run(options) {
         super.prerun(options);
         /** if less than 50 minutes before 1am */
-        if (CveDate.getSecondsAfterMidnight() < 50 * 60) {
+        if (options.yesterdayAll) {
             const timestamp = startOfYesterday_default()();
             const delta = await Delta.newDeltaFromGitHistory(timestamp.toISOString(), endOfYesterday_default()().toISOString());
             console.log(`delta=${JSON.stringify(delta, null, 2)}`);
