@@ -55,10 +55,10 @@ jobs:
       - name: create release with source code as artifacts
         uses: softprops/action-gh-release@v1
         with:
-          name: CVE ${{ steps.timestamp.timestamp }} at End of Day
+          name: CVE ${{ env.timestamp }} at End of Day
           # body: Descriptions for CVE ${{ steps.timestamp.timestamp }} goes here
           body_path: ./release_notes.md
-          tag_name: cve_${{ steps.timestamp.timestamp }}_at_end_of_day
+          tag_name: cve_${{ env.timestamp }}_at_end_of_day
           files: |
             release_notes.md
             *.zip
