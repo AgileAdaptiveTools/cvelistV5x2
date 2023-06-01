@@ -22,10 +22,10 @@ jobs:
       v_current_run_timestamp: ${{ steps.get-timestamp.outputs.out }}
     steps:
       - name: util-id
-        run: ./cves.sh --version
+        run: node ./.github/workflows/dist/index.js --version
       - name: generate-name
         id: get-timestamp
-        run: echo "out=$(./cves.sh date --midnight-yesterday --terse)" >> $GITHUB_OUTPUT
+        run: echo "out=$(node ./.github/workflows/dist/index.js date --midnight-yesterday --terse)" >> $GITHUB_OUTPUT
   create_release:
     needs: [setup]
     environment: deployment
