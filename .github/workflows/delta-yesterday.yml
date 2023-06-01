@@ -46,7 +46,7 @@ jobs:
         with:
           name: CVE ${{ env.timestamp }} at End of Day
           body_path: ./release_notes.md
-          tag_name: cve_${{ env.timestamp }}_at_end_of_day
+          tag_name: cve_${{ env.timestamp }}_at_end_of_day 
           files: |
             release_notes.md
             *.zip
