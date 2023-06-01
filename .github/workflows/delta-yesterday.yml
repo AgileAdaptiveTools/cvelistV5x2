@@ -1,6 +1,6 @@
 # Github Action for hourly releases
 
-name: CVE Release
+name: CVE Yesterday's Delta Release
 
 on:
   # at midnight (UTC) every night
