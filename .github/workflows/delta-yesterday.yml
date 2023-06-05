@@ -41,14 +41,16 @@ jobs:
         run: |
           ls ./.github/workflows/dist
           node ./.github/workflows/dist/index.js delta --yesterday-all
-      - name: Download artifact from yesterday's baseline workflow
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: baseline.yml
-          workflow_conclusion: success
-          skip_unpack: true
-          if_no_artifact_found: fail
-          name: ${{ env.timestamp }}_all_CVEs_at_midnight.zip
+      # it would be nice to have yesterday's midnight baseline in this release, but by the time this workflow
+      # runs, that artifact is no longer accessible using dawidd6/action-download-artifact@v2
+      # - name: Download artifact from yesterday's baseline workflow
+      #   uses: dawidd6/action-download-artifact@v2
+      #   with:
+      #     workflow: baseline.yml
+      #     workflow_conclusion: success
+      #     skip_unpack: true
+      #     if_no_artifact_found: fail
+      #     name: ${{ env.timestamp }}_all_CVEs_at_midnight.zip
       - name: ls cwd
         run: |
           ls
