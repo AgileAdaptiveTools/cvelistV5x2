@@ -41,6 +41,17 @@ jobs:
         run: |
           ls ./.github/workflows/dist
           node ./.github/workflows/dist/index.js delta --yesterday-all
+      - name: Download artifact from yesterday's baseline workflow
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: baseline.yml
+          workflow_conclusion: success
+          skip_unpack: true
+          if_no_artifact_found: fail
+          name: ${{ env.timestamp }}_all_CVEs_at_midnight.zip
+      - name: ls cwd
+        run: |
+          ls
       - name: create release with source code as artifacts
         uses: softprops/action-gh-release@v1
         with:
