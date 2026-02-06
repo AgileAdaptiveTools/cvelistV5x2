@@ -54,7 +54,7 @@ fi
 # 2. Extract batch to a temporary text file
 BATCH_FILE=$(mktemp)
 PROCESS_FILE_LENGTH=$(cat $BATCH_FILE | wc -l)
-jq -r ".listing[0:$CURRENT_BATCH_LIMIT][]" "$MASTER_LIST" > "$BATCH_FILE"
+jq -r ".listing[0:$CURRENT_RUN_LIMIT][]" "$MASTER_LIST" > "$BATCH_FILE"
 
 echo "Processing batch of $BATCH_SIZE CVEs..."
 
