@@ -67,18 +67,41 @@ jobs:
           node-version: 20
 
       # note that when this is running, the pwd is the home direcctory of the repository
-      - name: Run Update Script
+      - name: Initialize Script (if requested)
         run: |
           pwd
           if [ "${{ github.event.inputs.mode }}" == "init" ]; then
             echo "Running Initialization..."
             # Running the script from the workflow directory against the ./cves folder
             "$GITHUB_WORKSPACE/.github/workflows/build_cve_fullpath_listing.sh" ./cves
-          else
-            $GITHUB_WORKSPACE/.github/workflows/process_cves.sh ./cves
           fi
-      - name: Commit and Push Changes
+      - name: Run Update CVEs Script
         run: |
+          echo "Processing CVEs..."
+          $GITHUB_WORKSPACE/.github/workflows/process_cves.sh ./cves
+      - name: Update CVEs
+        run: |
+          # 1. set starting timestamp
+          export STARTING_TIMESTAMP=$(date '+%Y-%m-%d_%H%M_UTC')
+          echo "out=$STARTING_TIMESTAMP" >> $GITHUB_OUTPUT
+
+          # 2. find last update from the third item in the deltaLog.json file
+          #    this is a very conservative precaution in case the last 2 operations
+          #    failed after the deltaLog is written, but before the CVEs are committed.
+          if [ -f "$CVES_BASE_DIRECTORY/deltaLog.json" ]; then
+             PREV_UPDATE=$(jq -c -r .[2].fetchTime < "$CVES_BASE_DIRECTORY/deltaLog.json")
+          else
+             echo "Warning: deltaLog.json not found, using default start."
+             PREV_UPDATE=""
+          fi
+
+          # 3. run update
+          # Note that the update code does the git add and git commit with proper message
+          #  so when it completes, the script only needs to push
+          node ./.github/workflows/dist/index.js update "$UPDATE_PARAMS" --start=$PREV_UPDATE
+          
+          # 5. git commit
+
           # Configure git
           git config user.name "GitHub Action Bot"
           git config user.email "actions@github.com"
@@ -87,9 +110,15 @@ jobs:
           git add .
           
           # Check if there are changes to commit
-          if git diff --staged --quiet; then
-            echo "No changes to commit."
-          else
-            git commit -m "Processed batch of CVEs"
-            git push
-          fi
+          # if git diff --staged --quiet; then
+          #   echo "No changes to commit."
+          # else
+          #   git commit -m "Processed batch of CVEs"
+          #   git push
+          # fi
+          # COMMIT_MSG=$(git log -1 --pretty=%B)
+          # echo "$COMMIT_MSG" > commit_message.txt
+          # cat commit_message.txt
+          
+          # 6. push changes
+          git push
