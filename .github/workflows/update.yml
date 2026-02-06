@@ -1,4 +1,5 @@
-# Github Action for updates to this repository
+# Github Action to update this repository using CVE REST Services
+# Note that this script was refactored with help from google gemini 3 pro
 
 name: CVE Update
 on:
@@ -6,29 +7,33 @@ on:
   # note this may not complete when the hourly "CVE Release" workflow starts,
   #   so that the updates in this task may not be reflected
   #   in the CVE Release artifacts running in a separate workflow
-  # note also that if this job runs longer than 5 minutes,
-  #   the next job will run 5 minutes after this completes
   schedule:
     - cron: '*/5 * * * *'
   # Enables manual runs of this workflow from the Actions tab
   workflow_dispatch:
     inputs:
-      # logLevel:
-      #   description: 'Log level'
-      #   required: false
-      #   default: 'debug'
       params:
         description: 'command line arguments to update'
         required: false
         default: ''
 
+# limits the operations this script can do
+permissions:
+  contents: write
+
+# Ensures that if a job is running, a new one waits for it to finish 
+#    rather than running in parallel (which may cause conflicts).
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   update-cves:
     environment: deployment
     runs-on: ubuntu-latest
+    # specifies the maximum number of minutes this job can run before GitHub cancels it
+    timeout-minutes: 15
+
     env:
       CVE_SERVICES_URL: https://cveawg.mitre.org
       CVE_SERVICES_RECORDS_PER_PAGE: 500
@@ -37,31 +42,70 @@ jobs:
       CVES_RECENT_ACTIVITIES_FILENAME: recent_activities.json
       CVES_DEFAULT_UPDATE_LOOKBACK_IN_MINS: 180
       CVES_DEFAULT_DELTA_LOG_HISTORY_IN_DAYS: 30
-      CVE_API_ORG: ${{secrets.CVE_API_ORG}}
-      CVE_API_USER: ${{secrets.CVE_API_USER}}
-      CVE_API_KEY: ${{secrets.CVE_API_KEY}}
+      CVE_API_ORG: ${{ secrets.CVE_API_ORG }}
+      CVE_API_USER: ${{ secrets.CVE_API_USER }}
+      CVE_API_KEY: ${{ secrets.CVE_API_KEY }}
+      UPDATE_PARAMS: ${{ github.event.inputs.params }}  # Pass input as environment variable to prevent shell injections
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
+
       - name: Setup Node to specific version
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
+
       - name: Update CVEs
         run: |
-          export TEMP_TIMESTAMP=$(date '+%Y-%m-%d_%H%M_UTC')
-          echo "out=$TEMP_TIMESTAMP" >> $GITHUB_OUTPUT
-          git pull
+          # 1. set starting timestamp
+          export STARTING_TIMESTAMP=$(date '+%Y-%m-%d_%H%M_UTC')
+          echo "out=$STARTING_TIMESTAMP" >> $GITHUB_OUTPUT
+
+          # 2. setup git user
           git config --global user.email "github_action@example.com"
           git config --global user.name "cvelistV5 Github Action"
-          git remote set-url origin https://${GITHUB_TOKEN}@github.com/${{github.repository}}.git
-          export PREV_TS=$(jq -c -r .[2].fetchTime < $CVES_BASE_DIRECTORY/deltaLog.json)
-          node ./.github/workflows/dist/index.js update ${{ github.event.inputs.params }} --start=$PREV_TS
+          # the following is not needed because actions/checkout@v4 handles authentication
+          #   and is more secure
+          # git remote set-url origin https://${GITHUB_TOKEN}@github.com/${{github.repository}}.git
+
+          # 3. find last update from the third item in the deltaLog.json file
+          #    this is a very conservative precaution in case the last 2 operations
+          #    failed after the deltaLog is written, but before the CVEs are committed.
+          if [ -f "$CVES_BASE_DIRECTORY/deltaLog.json" ]; then
+             PREV_UPDATE=$(jq -c -r .[2].fetchTime < "$CVES_BASE_DIRECTORY/deltaLog.json")
+          else
+             echo "Warning: deltaLog.json not found, using default start."
+             PREV_UPDATE=""
+          fi
+
+          # 4. run update
+          # Note that the update code does the git add and git commit with proper message
+          #  so when it completes, the script only needs to push
+          node ./.github/workflows/dist/index.js update "$UPDATE_PARAMS" --start=$PREV_UPDATE
+          
+          # 5. get commit message
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "$COMMIT_MSG" > commit_message.txt
+          cat commit_message.txt
+          
+          # 6. push changes
           git push
-      # - name: output
-      #   uses: actions/github-script@v6
-      #   with:
-      #     script: |
-      #         core.notice("this is a notice")
+
+      - name: output
+        uses: actions/github-script@v7
+        if: always() # Run this even if the commit step failed
+        with:
+          script: |
+            const fs = require('fs');
+            try {
+              // Read the file content (ensure the path is correct relative to the root)
+              const content = fs.readFileSync('commit_message.txt', 'utf8');
+              
+              // Log it as a Notice in the GitHub Actions UI
+              core.notice(`${content}`);
+            } catch (err) {
+              core.setFailed(`Failed to read file: ${err.message}`);
+            }

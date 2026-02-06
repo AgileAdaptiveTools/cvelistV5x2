@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# --- CONFIGURATION ---
+MASTER_LIST="all_cve_files.json"
+BATCH_SIZE=5000
+
+# Fallback for local testing/GitHub Summary
+SUM_OUT="${GITHUB_STEP_SUMMARY:-/dev/stdout}"
+
+if ! command -v jq &> /dev/null; then echo "Error: jq is required"; exit 1; fi
+if [ ! -f "$MASTER_LIST" ]; then echo "Error: Master list not found"; exit 1; fi
+
+# 1. Check if there is work to do
+TOTAL_FILES=$(jq '.listing | length' "$MASTER_LIST")
+
+if [ "$TOTAL_FILES" -eq 0 ] || [ "$TOTAL_FILES" == "null" ]; then
+    echo "Queue is empty. Nothing to process."
+    exit 0
+fi
+
+# 2. Extract batch to a temporary text file
+BATCH_FILE=$(mktemp)
+PROCESS_FILE_LENGTH=$(cat $BATCH_FILE | wc -l)
+jq -r ".listing[0:$BATCH_SIZE][]" "$MASTER_LIST" > "$BATCH_FILE"
+
+echo "Processing batch of $BATCH_SIZE CVEs..."
+
+# 3. Loop through the batch and transform files
+while IFS= read -r file; do
+    if [ -n "$file" ] && [ -f "$file" ]; then
+
+        # Check if the key exists before attempting modification
+        if jq -e '.cveMetadata.datePublished' "$file" > /dev/null 2>&1; then
+            
+            # Create a temp file for the output
+            tmp=$(mktemp)
+
+            # 2. Parse, increment second, set microsecond to 999
+            # This jq filter:
+            # a. Takes the date string
+            # b. Converts to seconds (fromdateiso8601)
+            # c. Adds 1 second
+            # d. Converts back to ISO string (todateiso8601)
+            # e. Replaces the 'Z' at the end with '.999Z' to force the microseconds
+            # jq '.cveMetadata.datePublished |= (fromdateiso8601 | . + 1 | todateiso8601 | sub("Z$"; ".999Z"))' "$file" > "$tmp"
+            jq --indent 4 '.cveMetadata.datePublished |= (
+                (if endswith("Z") then . else . + "Z" end) | # Ensure Z suffix exists
+                sub("\\.[0-9]+Z$"; "Z") |                   # Strip existing milliseconds
+                fromdateiso8601 |                           # Convert to Unix epoch
+                . + 1 |                                     # Increment
+                strftime("%Y-%m-%dT%H:%M:%S") |        # Format back to string
+                . + ".999Z"                                 # Add your specific suffix
+                )' "$file" > "$tmp"        
+            # Move temp file back to original
+            mv "$tmp" "$file"
+            # remove final newline
+            perl -i -0777 -pe 's/\n\z//' "$file"
+        else
+            # 3. Error message if key missing, output to stderr
+            echo "Error: Key 'cveMetadata.datePublished' not found in $file" >&2
+        fi
+    fi
+done < "$BATCH_FILE"
+
+# 4. Update the Master List by removing the processed items
+jq ".listing |= .[$BATCH_SIZE:]" "$MASTER_LIST" > "${MASTER_LIST}.tmp" && mv "${MASTER_LIST}.tmp" "$MASTER_LIST"
+
+# 5. Output status
+REMAINING=$(jq '.listing | length' "$MASTER_LIST")
+{
+  echo "Processing complete."
+  echo "Remaining files in queue: $REMAINING"
+} >> "$SUM_OUT"
+
+# Cleanup
+# cat "$BATCH_FILE"
+rm "$BATCH_FILE"

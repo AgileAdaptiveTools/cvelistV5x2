@@ -1,0 +1,95 @@
+# Github Action that touches all CVEs by
+#   - modifying publishDate
+# - in 2026-02, this is to test how many CVEs can be batch modified with live updates
+#      from CVE REST Services without messing up github actions processing:
+#      1. the commit message max is not reached
+#      2. the delta.zips works as before
+#      3. check effect of mixing live updates with GitHub Action modifications
+# Notes
+# - parts of this script was built using google gemini 3 pro (2026-01-29)
+# - this code is a modified copy of update.yml (2026-01-31)
+
+name: Run Process CVEs in Batch
+on:
+  # run every 5~10 minutes (min Github scheduling allowed)
+  schedule:
+    - cron: '*/5 * * * *'
+  # Enables manual runs of this workflow from the Actions tab
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Select "init" to rebuild the master list, or "batch" to process CVEs'
+        required: true
+        default: 'batch'
+        type: choice
+        options:
+          - batch
+          - init
+# limits the operations this script can do
+permissions:
+  contents: write
+
+# Ensures that if a job is running, a new one waits for it to finish 
+#    rather than running in parallel (which may cause conflicts).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  update-cves:
+    environment: deployment
+    runs-on: ubuntu-latest
+    # specifies the maximum number of minutes this job can run before GitHub cancels it
+    timeout-minutes: 40
+
+    env:
+      CVE_SERVICES_URL: https://cveawg.mitre.org
+      CVE_SERVICES_RECORDS_PER_PAGE: 500
+      CVE_ORG_URL: https://www.cve.org
+      CVES_BASE_DIRECTORY: cves
+      CVES_RECENT_ACTIVITIES_FILENAME: recent_activities.json
+      CVES_DEFAULT_UPDATE_LOOKBACK_IN_MINS: 180
+      CVES_DEFAULT_DELTA_LOG_HISTORY_IN_DAYS: 30
+      CVE_API_ORG: ${{ secrets.CVE_API_ORG }}
+      CVE_API_USER: ${{ secrets.CVE_API_USER }}
+      CVE_API_KEY: ${{ secrets.CVE_API_KEY }}
+      UPDATE_PARAMS: ${{ github.event.inputs.params }}  # Pass input as environment variable to prevent shell injections
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node to specific version
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # note that when this is running, the pwd is the home direcctory of the repository
+      - name: Run Update Script
+        run: |
+          pwd
+          if [ "${{ github.event.inputs.mode }}" == "init" ]; then
+            echo "Running Initialization..."
+            # Running the script from the workflow directory against the ./cves folder
+            "$GITHUB_WORKSPACE/.github/workflows/build_cve_fullpath_listing.sh" ./cves
+          else
+            $GITHUB_WORKSPACE/.github/workflows/process_cves.sh ./cves
+          fi
+      - name: Commit and Push Changes
+        run: |
+          # Configure git
+          git config user.name "GitHub Action Bot"
+          git config user.email "actions@github.com"
+          
+          # Stage the JSON files
+          git add .
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Processed batch of CVEs"
+            git push
+          fi
