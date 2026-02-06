@@ -119,7 +119,7 @@ jobs:
           # COMMIT_MSG=$(git log -1 --pretty=%B)
           # echo "$COMMIT_MSG" > commit_message.txt
           # cat commit_message.txt
-          git commit -m "Processed batch of CVEs"
+          # git commit -m "Processed batch of CVEs"
           
           # 6. push changes
           git push
