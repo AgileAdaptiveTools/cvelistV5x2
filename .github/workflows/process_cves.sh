@@ -6,7 +6,6 @@
 MASTER_LIST="all_cve_files.json"
 TALLY_FILE="tally.json"
 BATCH_SIZE=20
-MAX_PER_DAY=350
 TODAY=$(date +%Y-%m-%d)
 
 # Fallback for local testing/GitHub Summary
@@ -17,10 +16,12 @@ if [ ! -f "$MASTER_LIST" ]; then echo "Error: Master list not found"; exit 1; fi
 
 # 1. Initialize or Load set of files related to the Tally
 if [ ! -f "$TALLY_FILE" ]; then
-    echo "{\"max_per_day\": "$MAX_PER_DAY", \"processed_today\": 0, \"last_updated_day\": \"$TODAY\"}" > "$TALLY_FILE"
+    # echo "{\"max_per_day\": "$MAX_PER_DAY", \"processed_today\": 0, \"last_updated_day\": \"$TODAY\"}" > "$TALLY_FILE"
+    echo "tally.json not found"
 fi
 
 PROCESSED_TODAY=$(jq -r '.processed_today' "$TALLY_FILE")
+MAX_PER_DAY=$(jq -r '.max_per_day' "$TALLY_FILE")
 LAST_DAY=$(jq -r '.last_updated_day' "$TALLY_FILE")
 
 # 2. Handle Daily Reset
