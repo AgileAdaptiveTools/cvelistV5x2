@@ -85,6 +85,14 @@ jobs:
         run: |
           echo "Processing CVEs..."
           $GITHUB_WORKSPACE/.github/workflows/process_cves.sh ./cves
+
+          
+          # Configure git here because it is needed in next line and in index.js in the next step
+          git config --global user.email "github_action@example.com"
+          git config --global user.name "cvelistV5 Github Action"
+          
+          git add all_cve_files.json tally.json
+          
       - name: Update CVEs
         run: |
           # 1. set starting timestamp
@@ -100,10 +108,6 @@ jobs:
              echo "Warning: deltaLog.json not found, using default start."
              PREV_UPDATE=""
           fi
-          
-          # Configure git here because it is needed in index.js next
-          git config --global user.email "github_action@example.com"
-          git config --global user.name "cvelistV5 Github Action"
 
           # 3. run update
           # Note that the update code does the git add and git commit with proper message
@@ -112,20 +116,10 @@ jobs:
           ls -al
           
           # 5. git commit
-          
-          # Stage the JSON files
-          git add .
-          
-          # Check if there are changes to commit
-          # if git diff --staged --quiet; then
-          #   echo "No changes to commit."
-          # else
-          git commit -m "Processed batch of CVEs"
-          git push
-          # fi
           # COMMIT_MSG=$(git log -1 --pretty=%B)
           # echo "$COMMIT_MSG" > commit_message.txt
           # cat commit_message.txt
+          git commit -m "Processed batch of CVEs"
           
           # 6. push changes
           git push
