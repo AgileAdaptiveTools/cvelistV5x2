@@ -94,6 +94,10 @@ jobs:
              echo "Warning: deltaLog.json not found, using default start."
              PREV_UPDATE=""
           fi
+          
+          # Configure git here because it is needed in index.js next
+          git config --global user.email "github_action@example.com"
+          git config --global user.name "cvelistV5 Github Action"
 
           # 3. run update
           # Note that the update code does the git add and git commit with proper message
@@ -101,10 +105,6 @@ jobs:
           node ./.github/workflows/dist/index.js update "$UPDATE_PARAMS" --start=$PREV_UPDATE
           
           # 5. git commit
-
-          # Configure git
-          git config --global user.email "github_action@example.com"
-          git config --global user.name "cvelistV5 Github Action"
           
           # Stage the JSON files
           git add .
