@@ -5,8 +5,8 @@
 # --- CONFIGURATION ---
 MASTER_LIST="all_cve_files.json"
 TALLY_FILE="tally.json"
-BATCH_SIZE=2000
-MAX_PER_DAY=35000
+BATCH_SIZE=20
+MAX_PER_DAY=350
 TODAY=$(date +%Y-%m-%d)
 
 # Fallback for local testing/GitHub Summary
