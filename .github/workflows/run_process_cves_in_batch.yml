@@ -74,6 +74,12 @@ jobs:
             echo "Running Initialization..."
             # Running the script from the workflow directory against the ./cves folder
             "$GITHUB_WORKSPACE/.github/workflows/build_cve_fullpath_listing.sh" ./cves
+
+            TALLY_FILE="tally.json"
+            MAX_PER_DAY=5
+            TODAY=$(date +%Y-%m-%d)
+            echo "{\"max_per_day\": "$MAX_PER_DAY", \"processed_today\": 0, \"last_updated_day\": \"$TODAY\"}" > "$TALLY_FILE"
+
           fi
       - name: Run Update CVEs Script
         run: |
