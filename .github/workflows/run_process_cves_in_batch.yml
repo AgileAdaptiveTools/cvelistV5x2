@@ -109,6 +109,7 @@ jobs:
           # Note that the update code does the git add and git commit with proper message
           #  so when it completes, the script only needs to push
           node ./.github/workflows/dist/index.js update "$UPDATE_PARAMS" --start=$PREV_UPDATE
+          ls -al
           
           # 5. git commit
           
@@ -119,8 +120,8 @@ jobs:
           # if git diff --staged --quiet; then
           #   echo "No changes to commit."
           # else
-          #   git commit -m "Processed batch of CVEs"
-          #   git push
+          git commit -m "Processed batch of CVEs"
+          git push
           # fi
           # COMMIT_MSG=$(git log -1 --pretty=%B)
           # echo "$COMMIT_MSG" > commit_message.txt
