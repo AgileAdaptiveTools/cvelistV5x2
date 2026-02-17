@@ -32,7 +32,7 @@ jobs:
     environment: deployment
     runs-on: ubuntu-latest
     # specifies the maximum number of minutes this job can run before GitHub cancels it
-    timeout-minutes: 15
+    timeout-minutes: 60
 
     env:
       CVE_SERVICES_URL: https://cveawg.mitre.org
@@ -87,25 +87,25 @@ jobs:
           node ./.github/workflows/dist/index.js update "$UPDATE_PARAMS" --start=$PREV_UPDATE
           
           # 5. get commit message
-          COMMIT_MSG=$(git log -1 --pretty=%B)
-          echo "$COMMIT_MSG" > commit_message.txt
-          cat commit_message.txt
+          # COMMIT_MSG=$(git log -1 --pretty=%B)
+          # echo "$COMMIT_MSG" > commit_message.txt
+          # cat commit_message.txt
           
           # 6. push changes
           git push
 
-      - name: output
-        uses: actions/github-script@v7
-        if: always() # Run this even if the commit step failed
-        with:
-          script: |
-            const fs = require('fs');
-            try {
-              // Read the file content (ensure the path is correct relative to the root)
-              const content = fs.readFileSync('commit_message.txt', 'utf8');
+      # - name: output
+      #   uses: actions/github-script@v7
+      #   if: always() # Run this even if the commit step failed
+      #   with:
+      #     script: |
+      #       const fs = require('fs');
+      #       try {
+      #         // Read the file content (ensure the path is correct relative to the root)
+      #         const content = fs.readFileSync('commit_message.txt', 'utf8');
               
-              // Log it as a Notice in the GitHub Actions UI
-              core.notice(`${content}`);
-            } catch (err) {
-              core.setFailed(`Failed to read file: ${err.message}`);
-            }
+      #         // Log it as a Notice in the GitHub Actions UI
+      #         core.notice(`${content}`);
+      #       } catch (err) {
+      #         core.setFailed(`Failed to read file: ${err.message}`);
+      #       }
