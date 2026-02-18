@@ -32,7 +32,7 @@ jobs:
     environment: deployment
     runs-on: ubuntu-latest
     # specifies the maximum number of minutes this job can run before GitHub cancels it
-    timeout-minutes: 60
+    # timeout-minutes: 60
 
     env:
       CVE_SERVICES_URL: https://cveawg.mitre.org
