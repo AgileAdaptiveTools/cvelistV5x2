@@ -15,13 +15,16 @@ on:
 jobs:
   dispatch:
     runs-on: ubuntu-latest
+    env:
+      APP_ID: ${{ secrets.GITHUBAPP_NEW_COMMIT_APPID }}
+      APP_PRIVATE_KEY: ${{ secrets.GITHUBAPP_NEW_COMMIT_PRIVATE_KEY }}
     steps:
       - name: Generate Token
         id: generate_token
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ secrets.GITHUBAPP_NEW_COMMIT_APPID }}
-          private-key: ${{ secrets.GITHUBAPP_NEW_COMMIT_PRIVATE_KEY }}
+          app-id: $APP_ID
+          private-key: $APP_PRIVATE_KEY
           # Target the destination repository specifically
           owner: ${{ github.repository_owner }}
           repositories: "sadp-cves"
