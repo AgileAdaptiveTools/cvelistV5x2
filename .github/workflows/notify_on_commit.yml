@@ -1,6 +1,14 @@
 name: Notify Destination Repo
 
 on:
+  # Enables manual runs of this workflow from the Actions tab
+  workflow_dispatch:
+    inputs:
+      params:
+        description: 'command line arguments to update'
+        required: false
+        default: ''
+  # on commit
   push:
     branches: [ main ]
 
