@@ -22,7 +22,16 @@ permissions:
   contents: write
 
 # Ensures that if a job is running, a new one waits for it to finish 
-#    rather than running in parallel (which may cause conflicts).
+#    rather than running in parallel, plus.
+# - Guaranteed Delivery: If we have back-to-back commits, setting this to true might cancel
+#   the "notify_on_commit" job before it actually finishes. This would result in the destination repository 
+#   missing a synchronization signal
+# - Sequential Ordering: By setting this to false, GitHub will "queue" the second notification.
+#   Once the first one finishes sending the dispatch, the next one starts. This ensures that the destination repo
+#   receives signals in the exact order the commits were made.
+# - Preventing API Race Conditions: If two "notify_on_commit" actions hit the GitHub API with the same destination repository
+#   at the exact same millisecond, you could (occasionally) run into a 409 Conflict or a rate-limit hiccup.
+#   Queuing them prevents this entirely.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
@@ -45,13 +54,23 @@ jobs:
       CVE_API_ORG: ${{ secrets.CVE_API_ORG }}
       CVE_API_USER: ${{ secrets.CVE_API_USER }}
       CVE_API_KEY: ${{ secrets.CVE_API_KEY }}
+      APP_ID: ${{ secrets.GITHUBAPP_NEW_COMMIT_APPID }}
+      APP_PRIVATE_KEY: ${{ secrets.GITHUBAPP_NEW_COMMIT_PRIVATE_KEY }}
       UPDATE_PARAMS: ${{ github.event.inputs.params }}  # Pass input as environment variable to prevent shell injections
 
     steps:
+      - name: Generate Token
+        id: generate_token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.GITHUBAPP_NEW_COMMIT_APPID }}
+          private-key: ${{ secrets.GITHUBAPP_NEW_COMMIT_PRIVATE_KEY }}
+      
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+          token: ${{ steps.generate_token.outputs.token }} # Use the same App token as other actions that will be triggered by this action
 
       - name: Setup Node to specific version
         uses: actions/setup-node@v4
@@ -67,9 +86,6 @@ jobs:
           # 2. setup git user
           git config --global user.email "github_action@example.com"
           git config --global user.name "cvelistV5 Github Action"
-          # the following is not needed because actions/checkout@v4 handles authentication
-          #   and is more secure
-          # git remote set-url origin https://${GITHUB_TOKEN}@github.com/${{github.repository}}.git
 
           # 3. find last update from the third item in the deltaLog.json file
           #    this is a very conservative precaution in case the last 2 operations
