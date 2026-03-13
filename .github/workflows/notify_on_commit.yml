@@ -12,6 +12,20 @@ on:
   push:
     branches: [ main ]
 
+# Ensures only one notification job runs at a time per branch, plus
+# - Guaranteed Delivery: If we have back-to-back commits, setting this to true might cancel
+#   the "notify_on_commit" job before it actually finishes. This would result in the destination repository 
+#   missing a synchronization signal
+# - Sequential Ordering: By setting this to false, GitHub will "queue" the second notification.
+#   Once the first one finishes sending the dispatch, the next one starts. This ensures that the destination repo
+#   receives signals in the exact order the commits were made.
+# - Preventing API Race Conditions: If two "notify_on_commit" actions hit the GitHub API with the same destination repository
+#   at the exact same millisecond, you could (occasionally) run into a 409 Conflict or a rate-limit hiccup.
+#   Queuing them prevents this entirely.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+  
 jobs:
   dispatch:
     runs-on: ubuntu-latest
