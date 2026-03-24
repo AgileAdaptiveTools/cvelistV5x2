@@ -56,6 +56,6 @@ jobs:
               "event_type": "source_repo_updated",
               "client_payload": {
                 "sha": "${{ github.sha }}",
-                "message": "New commit in source repo"
+                "message": "New commit in source repo noted by on_commit_notifier [skip ci]"
               }
             }'
