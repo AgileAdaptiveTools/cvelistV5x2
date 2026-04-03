@@ -1,68 +1,44 @@
 {
-  "fetchTime": "2026-04-03T11:51:29.629Z",
-  "numberOfChanges": 10,
+  "fetchTime": "2026-04-03T12:32:32.419Z",
+  "numberOfChanges": 6,
   "new": [
     {
-      "cveId": "CVE-2026-28703",
-      "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-28703",
-      "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/28xxx/CVE-2026-28703.json",
-      "dateUpdated": "2026-04-03T11:29:06.108Z"
+      "cveId": "CVE-2026-27655",
+      "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-27655",
+      "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/27xxx/CVE-2026-27655.json",
+      "dateUpdated": "2026-04-03T12:23:01.286Z"
+    }
+  ],
+  "updated": [
+    {
+      "cveId": "CVE-2025-7024",
+      "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2025-7024",
+      "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2025/7xxx/CVE-2025-7024.json",
+      "dateUpdated": "2026-04-03T12:16:42.627Z"
+    },
+    {
+      "cveId": "CVE-2026-28754",
+      "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-28754",
+      "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/28xxx/CVE-2026-28754.json",
+      "dateUpdated": "2026-04-03T12:16:03.455Z"
     },
     {
       "cveId": "CVE-2026-28756",
       "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-28756",
       "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/28xxx/CVE-2026-28756.json",
-      "dateUpdated": "2026-04-03T11:11:37.599Z"
-    },
-    {
-      "cveId": "CVE-2026-3879",
-      "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-3879",
-      "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/3xxx/CVE-2026-3879.json",
-      "dateUpdated": "2026-04-03T11:33:33.239Z"
-    },
-    {
-      "cveId": "CVE-2026-3880",
-      "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-3880",
-      "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/3xxx/CVE-2026-3880.json",
-      "dateUpdated": "2026-04-03T11:41:24.702Z"
+      "dateUpdated": "2026-04-03T12:08:31.385Z"
     },
     {
       "cveId": "CVE-2026-4107",
       "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-4107",
       "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/4xxx/CVE-2026-4107.json",
-      "dateUpdated": "2026-04-03T11:44:46.546Z"
+      "dateUpdated": "2026-04-03T12:05:11.586Z"
     },
     {
       "cveId": "CVE-2026-4108",
       "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-4108",
       "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/4xxx/CVE-2026-4108.json",
-      "dateUpdated": "2026-04-03T11:47:58.684Z"
-    },
-    {
-      "cveId": "CVE-2026-5467",
-      "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-5467",
-      "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/5xxx/CVE-2026-5467.json",
-      "dateUpdated": "2026-04-03T11:45:10.187Z"
-    }
-  ],
-  "updated": [
-    {
-      "cveId": "CVE-2026-34714",
-      "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-34714",
-      "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/34xxx/CVE-2026-34714.json",
-      "dateUpdated": "2026-04-03T11:15:39.723Z"
-    },
-    {
-      "cveId": "CVE-2026-5453",
-      "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-5453",
-      "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/5xxx/CVE-2026-5453.json",
-      "dateUpdated": "2026-04-03T11:20:13.272Z"
-    },
-    {
-      "cveId": "CVE-2026-5458",
-      "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-5458",
-      "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/5xxx/CVE-2026-5458.json",
-      "dateUpdated": "2026-04-03T11:17:55.821Z"
+      "dateUpdated": "2026-04-03T12:26:35.401Z"
     }
   ],
   "error": []
