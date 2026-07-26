@@ -1,5 +1,38 @@
 [
   {
+    "fetchTime": "2026-07-26T07:17:26.052Z",
+    "numberOfChanges": 4,
+    "new": [
+      {
+        "cveId": "CVE-2024-14040",
+        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2024-14040",
+        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2024/14xxx/CVE-2024-14040.json",
+        "dateUpdated": "2026-07-26T06:30:17.607Z"
+      },
+      {
+        "cveId": "CVE-2026-64530",
+        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-64530",
+        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/64xxx/CVE-2026-64530.json",
+        "dateUpdated": "2026-07-26T06:28:42.970Z"
+      }
+    ],
+    "updated": [
+      {
+        "cveId": "CVE-2026-1784",
+        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-1784",
+        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/1xxx/CVE-2026-1784.json",
+        "dateUpdated": "2026-07-26T06:59:53.209Z"
+      },
+      {
+        "cveId": "CVE-2026-46579",
+        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-46579",
+        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/46xxx/CVE-2026-46579.json",
+        "dateUpdated": "2026-07-26T07:10:01.146Z"
+      }
+    ],
+    "error": []
+  },
+  {
     "fetchTime": "2026-07-26T04:38:44.266Z",
     "numberOfChanges": 5,
     "new": [
@@ -82236,62 +82269,6 @@
         "dateUpdated": "2026-07-19T07:19:54.378Z"
       }
     ],
-    "error": []
-  },
-  {
-    "fetchTime": "2026-07-19T06:24:28.173Z",
-    "numberOfChanges": 8,
-    "new": [
-      {
-        "cveId": "CVE-2026-16213",
-        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-16213",
-        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/16xxx/CVE-2026-16213.json",
-        "dateUpdated": "2026-07-19T04:00:09.228Z"
-      },
-      {
-        "cveId": "CVE-2026-16214",
-        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-16214",
-        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/16xxx/CVE-2026-16214.json",
-        "dateUpdated": "2026-07-19T04:15:09.590Z"
-      },
-      {
-        "cveId": "CVE-2026-16215",
-        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-16215",
-        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/16xxx/CVE-2026-16215.json",
-        "dateUpdated": "2026-07-19T04:30:09.330Z"
-      },
-      {
-        "cveId": "CVE-2026-16216",
-        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-16216",
-        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/16xxx/CVE-2026-16216.json",
-        "dateUpdated": "2026-07-19T05:00:10.797Z"
-      },
-      {
-        "cveId": "CVE-2026-16217",
-        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-16217",
-        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/16xxx/CVE-2026-16217.json",
-        "dateUpdated": "2026-07-19T05:30:10.201Z"
-      },
-      {
-        "cveId": "CVE-2026-16218",
-        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-16218",
-        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/16xxx/CVE-2026-16218.json",
-        "dateUpdated": "2026-07-19T05:45:08.349Z"
-      },
-      {
-        "cveId": "CVE-2026-16219",
-        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-16219",
-        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/16xxx/CVE-2026-16219.json",
-        "dateUpdated": "2026-07-19T06:00:11.583Z"
-      },
-      {
-        "cveId": "CVE-2026-16220",
-        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-16220",
-        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/16xxx/CVE-2026-16220.json",
-        "dateUpdated": "2026-07-19T06:15:08.945Z"
-      }
-    ],
-    "updated": [],
     "error": []
   }
 ]
