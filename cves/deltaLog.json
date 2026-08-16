@@ -1,5 +1,31 @@
 [
   {
+    "fetchTime": "2026-08-16T11:17:00.532Z",
+    "numberOfChanges": 3,
+    "new": [],
+    "updated": [
+      {
+        "cveId": "CVE-2025-5914",
+        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2025-5914",
+        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2025/5xxx/CVE-2025-5914.json",
+        "dateUpdated": "2026-08-16T11:07:09.996Z"
+      },
+      {
+        "cveId": "CVE-2025-6020",
+        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2025-6020",
+        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2025/6xxx/CVE-2025-6020.json",
+        "dateUpdated": "2026-08-16T11:12:47.477Z"
+      },
+      {
+        "cveId": "CVE-2025-7425",
+        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2025-7425",
+        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2025/7xxx/CVE-2025-7425.json",
+        "dateUpdated": "2026-08-16T11:07:15.084Z"
+      }
+    ],
+    "error": []
+  },
+  {
     "fetchTime": "2026-08-16T10:37:50.951Z",
     "numberOfChanges": 3,
     "new": [],
@@ -120913,26 +120939,6 @@
         "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-19351",
         "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/19xxx/CVE-2026-19351.json",
         "dateUpdated": "2026-08-09T11:30:10.583Z"
-      }
-    ],
-    "updated": [],
-    "error": []
-  },
-  {
-    "fetchTime": "2026-08-09T10:57:34.746Z",
-    "numberOfChanges": 2,
-    "new": [
-      {
-        "cveId": "CVE-2026-19348",
-        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-19348",
-        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/19xxx/CVE-2026-19348.json",
-        "dateUpdated": "2026-08-09T10:30:09.153Z"
-      },
-      {
-        "cveId": "CVE-2026-19350",
-        "cveOrgLink": "https://www.cve.org/CVERecord?id=CVE-2026-19350",
-        "githubLink": "https://raw.githubusercontent.com/CVEProject/cvelistV5/main/cves/2026/19xxx/CVE-2026-19350.json",
-        "dateUpdated": "2026-08-09T10:45:10.818Z"
       }
     ],
     "updated": [],
